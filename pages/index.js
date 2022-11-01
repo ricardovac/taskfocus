@@ -1,5 +1,6 @@
 import Head from "next/head";
 import { Box } from "@chakra-ui/react";
+import SignIn from "./signin";
 
 const Home = () => {
   return (
@@ -13,7 +14,8 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <Box>Hello world</Box>
+        {/* <Box>Hello world</Box> */}
+        <SignIn />
       </main>
     </div>
   );
