@@ -1,10 +1,11 @@
 import { useDisclosure } from "@chakra-ui/hooks";
-import { HStack, Box, Tag } from "@chakra-ui/react";
+import { HStack, Box, Tag, SimpleGrid, Text, Center } from "@chakra-ui/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import { useEffect, useRef, useState } from "react";
 import ManageTodo from "../components/ManageTodo";
 import Navbar from "../components/Navbar";
+import SingleTodo from "../components/SingleTodo";
 import { supabaseClient } from "../lib/client";
 
 const Home = () => {
@@ -20,6 +21,21 @@ const Home = () => {
       router.push("/signin");
     }
   }, [user, router]);
+
+  useEffect(() => {
+    if (user) {
+      supabaseClient
+        .from("todos")
+        .select("*")
+        .eq("user_id", user?.id)
+        .order("id", { ascending: false })
+        .then(({ data, error }) => {
+          if (!error) {
+            setTodos(data);
+          }
+        });
+    }
+  }, [user]);
 
   useEffect(() => {
     const todoListener = supabaseClient
@@ -54,9 +70,21 @@ const Home = () => {
         <ManageTodo isOpen={isOpen} onClose={onClose} initialRef={initialRef} />
         <HStack m="10" spacing="4" justify="center">
           <Box>
-            <Tag bg="green.500" borderRadius="3xl"></Tag>
+            <Tag bg="blue.300" borderRadius="3xl" size="sm" mt="0.5" /> Completo
+          </Box>
+          <Box>
+            <Tag bg="gray.400" borderRadius="3xl" size="sm" mt="0.5" /> Incompleto
           </Box>
         </HStack>
+        <SimpleGrid
+          columns={{ base: 2, md: 3, lg: 4 }}
+          gap={{ base: "4", md: "6", lg: "8" }}
+          m="10"
+        >
+          {todos.map((todo) => (
+            <SingleTodo todo={todo} key={todo.id} />
+          ))}
+        </SimpleGrid>
       </main>
     </div>
   );

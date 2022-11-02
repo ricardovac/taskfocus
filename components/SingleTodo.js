@@ -1,6 +1,6 @@
 import { Box, Divider, Heading, Text, Tag } from "@chakra-ui/react";
 
-const singleTodo = ({ todo }) => {
+const SingleTodo = ({ todo }) => {
   const getDateInMonthDayYear = (data) => {
     const d = new Date(data);
     const options = {
@@ -31,7 +31,7 @@ const singleTodo = ({ todo }) => {
         position="absolute"
         top="3"
         right="2"
-        bg={todo.isComplete ? "green.500" : "yellow.400"}
+        bg={todo.isComplete ? "blue.300" : "gray.400"}
         borderRadius="3xl"
         size="sm"
       />
@@ -46,4 +46,4 @@ const singleTodo = ({ todo }) => {
   );
 };
 
-export default singleTodo;
+export default SingleTodo;
