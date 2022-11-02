@@ -12,7 +12,7 @@ import {
   Link,
   Stack,
   Text,
-  useColorModeValue
+  useColorModeValue,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { supabaseClient } from "../lib/client";
