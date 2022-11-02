@@ -1,8 +1,19 @@
 import Head from "next/head";
 import { Box } from "@chakra-ui/react";
 import SignIn from "./signin";
+import { useRouter } from "next/router";
+import { supabaseClient } from "../lib/client";
+import { useEffect } from "react";
 
 const Home = () => {
+  const router = useRouter();
+  const user = supabaseClient.auth.getUser();
+
+  useEffect(() => {
+    if (!user) {
+      router.push("/signin");
+    }
+  }, [user, router]);
   return (
     <div>
       <Head>
@@ -14,7 +25,6 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        {/* <Box>Hello world</Box> */}
         <SignIn />
       </main>
     </div>

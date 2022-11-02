@@ -19,6 +19,7 @@ import { supabaseClient } from "../lib/client";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState(false);
@@ -28,8 +29,9 @@ const SignIn = () => {
     setIsLoading(true);
     setError(null);
     try {
-      const { error } = await supabaseClient.auth.signIn({
+      const { data, error } = await supabaseClient.auth.signInWithPassword({
         email,
+        password,
       });
     } catch (error) {
       setError(error.message);
@@ -38,8 +40,11 @@ const SignIn = () => {
     }
   };
 
-  const changeHandler = (event) => {
+  const changeHandlerEmail = (event) => {
     setEmail(event.target.value);
+  };
+  const changeHandlerPassword = (event) => {
+    setPassword(event.target.value);
   };
 
   return (
@@ -70,7 +75,7 @@ const SignIn = () => {
         >
           {isSubmitted ? (
             <Heading size="md" textAlign="center" color="gray.600">
-              Please check {email} for login link
+              Verifique sua senha!
             </Heading>
           ) : (
             <chakra.form onSubmit={submitHandler}>
@@ -83,7 +88,18 @@ const SignIn = () => {
                     autoComplete="email"
                     required
                     value={email}
-                    onChange={changeHandler}
+                    onChange={changeHandlerEmail}
+                  />
+                </FormControl>
+                <FormControl id="password">
+                  <FormLabel>Senha</FormLabel>
+                  <Input
+                    name="password"
+                    type="password"
+                    autoComplete="password"
+                    required
+                    value={password}
+                    onChange={changeHandlerPassword}
                   />
                 </FormControl>
                 <Stack spacing={10}>
