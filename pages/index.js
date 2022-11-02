@@ -1,20 +1,24 @@
+import { useDisclosure } from "@chakra-ui/hooks";
 import Head from "next/head";
-import { Box } from "@chakra-ui/react";
-import SignIn from "./signin";
 import { useRouter } from "next/router";
+import { useEffect, useRef } from "react";
+import ManageTodo from "../components/ManageTodo";
+import Navbar from "../components/Navbar";
 import { supabaseClient } from "../lib/client";
-import { useEffect } from "react";
-import WithSubnavigation from "../components/Navbar";
 
 const Home = () => {
+  const initialRef = useRef();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const router = useRouter();
-  const user = supabaseClient.auth.getUser();
+  const user = supabaseClient.auth.user()
 
   useEffect(() => {
     if (!user) {
       router.push("/signin");
     }
   }, [user, router]);
+
   return (
     <div>
       <Head>
@@ -26,7 +30,8 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <WithSubnavigation />
+        <Navbar onOpen={onOpen} />
+        <ManageTodo isOpen={isOpen} onClose={onClose} initialRef={initialRef} />
       </main>
     </div>
   );

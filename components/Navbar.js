@@ -23,11 +23,12 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
+import { supabaseClient } from "../lib/client";
 
-export default function WithSubnavigation() {
-  const { isOpen, onToggle } = useDisclosure();
+const Navbar = ({ onOpen }) => {
   const router = useRouter();
   const [isLogoutLoading, setIsLogoutLoading] = useState(false);
+  const { isOpen, onToggle } = useDisclosure();
 
   const logoutHandler = async () => {
     try {
@@ -88,7 +89,7 @@ export default function WithSubnavigation() {
           direction={"row"}
           spacing={6}
         >
-          <Button as={"a"} fontSize={"sm"} fontWeight={400}>
+          <Button as={"a"} fontSize={"sm"} fontWeight={400} onClick={onOpen}>
             Adicionar Tarefas
           </Button>
           <Button
@@ -114,7 +115,7 @@ export default function WithSubnavigation() {
       </Collapse>
     </Box>
   );
-}
+};
 
 const DesktopNav = () => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
@@ -247,21 +248,4 @@ const MobileNavItem = ({ label, children, href }) => {
     </Stack>
   );
 };
-
-// const NAV_ITEMS = [
-//   {
-//     label: "Profile",
-//     children: [
-//       {
-//         label: "Explore Design Work",
-//         subLabel: "Trending Design to inspire you",
-//         href: "#",
-//       },
-//       {
-//         label: "New & Noteworthy",
-//         subLabel: "Up-and-coming Designers",
-//         href: "#",
-//       },
-//     ],
-//   },
-// ];
+export default Navbar;

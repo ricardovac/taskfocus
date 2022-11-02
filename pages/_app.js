@@ -1,20 +1,20 @@
-import { ChakraProvider, useFocusEffect } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import { useRouter } from "next/router";
-import { use, useEffect } from "react";
+import { useEffect } from "react";
 import { supabaseClient } from "../lib/client";
 import customTheme from "../lib/theme";
 
 function MyApp({ Component, pageProps }) {
   const router = useRouter();
-  const user = supabaseClient.auth.getUser();
+  const user = supabaseClient.auth.user();
 
   useEffect(() => {
     const { data: authListener } = supabaseClient.auth.onAuthStateChange(
       (event, session) => {
         handleAuthSession(event, session);
-        if (event === "SIGNED_IN") { // se o usuário estiver logado:
-          const signedInUser = supabaseClient.auth.user(); // pega o usuário logado
-          const userId = signedInUser.id; // o id do usuário
+        if (event === "SIGNED_IN") {
+          const signedInUser = supabaseClient.auth.user();
+          const userId = signedInUser.id;
           supabaseClient
             .from("profiles")
             .upsert({ id: userId })
@@ -31,26 +31,25 @@ function MyApp({ Component, pageProps }) {
     );
 
     return () => {
-      authListener.subscription.unsubscribe();
+      authListener.unsubscribe();
     };
   }, [router]);
 
-  // useEffect(() => {
-  //   if (user) {
-  //     if (router.pathname === "/signin") {
-  //       router.push("/");
-  //     }
-  //   }
-  // }, [router.pathname, user, router]);
+  useEffect(() => {
+    if (user) {
+      if (router.pathname === "/signin") {
+        router.push("/");
+      }
+    }
+  }, [router.pathname, user, router]);
 
   const handleAuthSession = async (event, session) => {
-    await fetch("/api/auth"),
-      {
-        method: "POST",
-        headers: new Headers({ "Content-Type": "application/json" }),
-        credentials: "same-origin",
-        body: JSON.stringify({ event, session }),
-      };
+    await fetch("/api/auth", {
+      method: "POST",
+      headers: new Headers({ "Content-Type": "application/json" }),
+      credentials: "same-origin",
+      body: JSON.stringify({ event, session }),
+    });
   };
 
   return (

@@ -1,6 +1,9 @@
 import {
   Alert,
   AlertIcon,
+  AlertTitle,
+  AlertDescription,
+  CloseButton,
   Box,
   Button,
   chakra,
@@ -13,26 +16,27 @@ import {
   Stack,
   Text,
   useColorModeValue,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { supabaseClient } from "../lib/client";
 
 const SignIn = () => {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState(false);
+  const [alert, setAlert] = useState(false);
+  const { isOpen: isVisible, onClose } = useDisclosure({ defaultIsOpen: true });
 
   const submitHandler = async (event) => {
     event.preventDefault();
     setIsLoading(true);
     setError(null);
     try {
-      const { data, error } = await supabaseClient.auth.signInWithPassword({
+      const { error } = await supabaseClient.auth.signIn({
         email,
-        password,
       });
+      setAlert(true);
     } catch (error) {
       setError(error.message);
     } finally {
@@ -42,9 +46,6 @@ const SignIn = () => {
 
   const changeHandlerEmail = (event) => {
     setEmail(event.target.value);
-  };
-  const changeHandlerPassword = (event) => {
-    setPassword(event.target.value);
   };
 
   return (
@@ -67,65 +68,67 @@ const SignIn = () => {
             <Text textAlign="center">{error}</Text>
           </Alert>
         )}
+        {alert && (
+          <Alert status="success">
+            <AlertIcon />
+            <Box>
+              <AlertTitle>Sucesso!</AlertTitle>
+              <AlertDescription>
+                Um Link Mágico foi enviado até a sua caixa de entrada, clique
+                neste link para obter acesso ao TaskFocus
+              </AlertDescription>
+            </Box>
+            <CloseButton
+              alignSelf="flex-start"
+              position="relative"
+              right={-1}
+              top={-1}
+              onClick={onClose}
+            />
+          </Alert>
+        )}
         <Box
           rounded={"lg"}
           bg={useColorModeValue("white", "gray.700")}
           boxShadow={"lg"}
           p={8}
         >
-          {isSubmitted ? (
-            <Heading size="md" textAlign="center" color="gray.600">
-              Verifique sua senha!
-            </Heading>
-          ) : (
-            <chakra.form onSubmit={submitHandler}>
-              <Stack spacing={4}>
-                <FormControl id="email">
-                  <FormLabel>E-mail</FormLabel>
-                  <Input
-                    name="email"
-                    type="email"
-                    autoComplete="email"
-                    required
-                    value={email}
-                    onChange={changeHandlerEmail}
-                  />
-                </FormControl>
-                <FormControl id="password">
-                  <FormLabel>Senha</FormLabel>
-                  <Input
-                    name="password"
-                    type="password"
-                    autoComplete="password"
-                    required
-                    value={password}
-                    onChange={changeHandlerPassword}
-                  />
-                </FormControl>
-                <Stack spacing={10}>
-                  <Stack
-                    direction={{ base: "column", sm: "row" }}
-                    align={"start"}
-                    justify={"space-between"}
-                  >
-                    {/* <Checkbox></Checkbox> */}
-                    <Link color={"blue.400"}>Esqueceu seu e-mail?</Link>
-                  </Stack>
-                  <Button
-                    type="submit"
-                    isLoading={isLoading}
-                    bg={"blue.400"}
-                    color={"white"}
-                    _hover={{
-                      bg: "blue.500",
-                    }}
-                  >
-                    Sign in
-                  </Button>
+          <chakra.form onSubmit={submitHandler}>
+            <Stack spacing={4}>
+              <FormControl id="email">
+                <FormLabel>E-mail</FormLabel>
+                <Input
+                  name="email"
+                  type="email"
+                  autoComplete="on"
+                  required
+                  value={email}
+                  onChange={changeHandlerEmail}
+                />
+              </FormControl>
+              <Stack spacing={10}>
+                <Stack
+                  direction={{ base: "column", sm: "row" }}
+                  align={"start"}
+                  justify={"space-between"}
+                >
+                  {/* <Checkbox></Checkbox> */}
+                  <Link color={"blue.400"}>Esqueceu seu e-mail?</Link>
                 </Stack>
+                <Button
+                  type="submit"
+                  isLoading={isLoading}
+                  bg={"blue.400"}
+                  color={"white"}
+                  _hover={{
+                    bg: "blue.500",
+                  }}
+                >
+                  Sign in
+                </Button>
               </Stack>
-            </chakra.form>
-          )}
+            </Stack>
+          </chakra.form>
         </Box>
       </Stack>
     </Flex>
