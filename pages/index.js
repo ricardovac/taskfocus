@@ -4,6 +4,7 @@ import SignIn from "./signin";
 import { useRouter } from "next/router";
 import { supabaseClient } from "../lib/client";
 import { useEffect } from "react";
+import WithSubnavigation from "../components/Navbar";
 
 const Home = () => {
   const router = useRouter();
@@ -25,7 +26,7 @@ const Home = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main>
-        <SignIn />
+        <WithSubnavigation />
       </main>
     </div>
   );
