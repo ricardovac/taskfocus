@@ -18,31 +18,53 @@ import {
   Text,
   Textarea,
 } from "@chakra-ui/react";
-import { useState } from "react";
+import Router, { useRouter } from "next/router";
+import { useEffect, useState } from "react";
 import { supabaseClient } from "../lib/client";
 
-const ManageTodo = ({ isOpen, onClose, initialRef }) => {
+const ManageTodo = ({ isOpen, onClose, initialRef, todo, setTodo }) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isComplete, setIsComplete] = useState(false);
   const [isLoading, setIsLoading] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (todo) {
+      setTitle(todo.title);
+      setDescription(todo.description);
+      setIsComplete(todo.isComplete);
+    }
+  }, [todo]);
 
   const submitHandler = async (event) => {
     event.preventDefault();
     setErrorMessage("");
     if (description.length <= 10) {
-      setErrorMessage("A descrição deve ter mais de 10 caracteres");
+      setErrorMessage("Description must have more than 10 characters");
       return;
     }
     setIsLoading(true);
-    const user = supabaseClient.auth.user()
-    const { error } = await supabaseClient
-      .from("todos")
-      .insert([{ title, description, isComplete, user_id: user.id }]);
+    const user = supabaseClient.auth.user();
+    let supabaseError;
+    if (todo) {
+      const { error } = await supabaseClient
+        .from("todos")
+        .update({ title, description, isComplete, user_id: user.id })
+        .eq("id", todo.id);
+      Router.reload();
+      supabaseError = error;
+    } else {
+      const { error } = await supabaseClient
+        .from("todos")
+        .insert([{ title, description, isComplete, user_id: user.id }]);
+      supabaseError = error;
+    }
+
     setIsLoading(false);
-    if (error) {
-      setErrorMessage(error.message);
+    if (supabaseError) {
+      setErrorMessage(supabaseError.message);
     } else {
       closeHandler();
     }
@@ -52,6 +74,7 @@ const ManageTodo = ({ isOpen, onClose, initialRef }) => {
     setTitle("");
     setDescription("");
     setIsComplete(false);
+    setTodo(null);
     onClose();
   };
 
@@ -65,8 +88,10 @@ const ManageTodo = ({ isOpen, onClose, initialRef }) => {
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={submitHandler}>
-          <ModalHeader>Adicionar tarefa</ModalHeader>
-          <ModalCloseButton />
+          <ModalHeader>
+            {todo ? "Atualizar tarefa" : "Adicionar tarefa"}
+          </ModalHeader>
+          <ModalCloseButton onClick={closeHandler} />
           <ModalBody pb={6}>
             {errorMessage && (
               <Alert status="error" borderRadius="lg" mb="6">
@@ -92,14 +117,14 @@ const ManageTodo = ({ isOpen, onClose, initialRef }) => {
                 value={description}
               />
               <FormHelperText>
-                A descrição deve ter mais de 10 caracteres
+                A descrição deve ter no mínimo 10 caracteres.
               </FormHelperText>
             </FormControl>
 
             <FormControl mt={4}>
               <FormLabel>Tarefa completa?</FormLabel>
               <Switch
-                value={isComplete}
+                isChecked={isComplete}
                 id="is-completed"
                 onChange={(event) => setIsComplete(!isComplete)}
               />
@@ -114,10 +139,10 @@ const ManageTodo = ({ isOpen, onClose, initialRef }) => {
                 type="reset"
                 isDisabled={isLoading}
               >
-                Cancelar
+                Cancel
               </Button>
               <Button colorScheme="blue" type="submit" isLoading={isLoading}>
-                Salvar
+                {todo ? "Update" : "Save"}
               </Button>
             </ButtonGroup>
           </ModalFooter>

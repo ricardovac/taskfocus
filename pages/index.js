@@ -11,6 +11,7 @@ import { supabaseClient } from "../lib/client";
 const Home = () => {
   const initialRef = useRef();
   const [todos, setTodos] = useState([]);
+  const [todo, setTodo] = useState(null);
 
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -43,8 +44,18 @@ const Home = () => {
       .on("*", (payload) => {
         const newTodo = payload.new;
         setTodos((oldTodos) => {
-          const newTodos = [...oldTodos, newTodo];
-          newTodo.sort((a, b) => b.id - a.id);
+          const exists = oldTodos.find((todo) => todo.id === newTodo.id);
+          let newTodos;
+          if (exists) {
+            const oldTodoIndex = oldTodos.findIndex(
+              (obj) => obj.id === newTodo.id
+            );
+            oldTodos[oldTodoIndex] = newTodo;
+            newTodos = oldTodos;
+          } else {
+            newTodos = [...oldTodos, newTodo];
+          }
+          newTodos.sort((a, b) => b.id - a.id);
           return newTodos;
         });
       })
@@ -54,6 +65,11 @@ const Home = () => {
       todoListener.unsubscribe();
     };
   }, []);
+
+  const openHandler = (clickedTodo) => {
+    setTodo(clickedTodo);
+    onOpen();
+  };
 
   return (
     <div>
@@ -67,13 +83,20 @@ const Home = () => {
       </Head>
       <main>
         <Navbar onOpen={onOpen} />
-        <ManageTodo isOpen={isOpen} onClose={onClose} initialRef={initialRef} />
+        <ManageTodo
+          isOpen={isOpen}
+          onClose={onClose}
+          initialRef={initialRef}
+          todo={todo}
+          setTodo={setTodo}
+        />
         <HStack m="10" spacing="4" justify="center">
           <Box>
             <Tag bg="blue.300" borderRadius="3xl" size="sm" mt="0.5" /> Completo
           </Box>
           <Box>
-            <Tag bg="gray.400" borderRadius="3xl" size="sm" mt="0.5" /> Incompleto
+            <Tag bg="gray.400" borderRadius="3xl" size="sm" mt="0.5" />{" "}
+            Incompleto
           </Box>
         </HStack>
         <SimpleGrid
@@ -82,7 +105,7 @@ const Home = () => {
           m="10"
         >
           {todos.map((todo) => (
-            <SingleTodo todo={todo} key={todo.id} />
+            <SingleTodo todo={todo} key={todo.id} openHandler={openHandler} />
           ))}
         </SimpleGrid>
       </main>

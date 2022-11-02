@@ -1,8 +1,16 @@
-import { Box, Divider, Heading, Text, Tag } from "@chakra-ui/react";
+import {
+  Box,
+  Divider,
+  Heading,
+  Text,
+  Tag,
+  Center,
+  Button,
+} from "@chakra-ui/react";
 
-const SingleTodo = ({ todo }) => {
-  const getDateInMonthDayYear = (data) => {
-    const d = new Date(data);
+const SingleTodo = ({ todo, openHandler, deleteHandler, isDeleteLoading }) => {
+  const getDateInMonthDayYear = (date) => {
+    const d = new Date(date);
     const options = {
       year: "numeric",
       month: "long",
@@ -23,6 +31,8 @@ const SingleTodo = ({ todo }) => {
       borderRadius="lg"
       overflow="hidden"
       p="4"
+      onClick={() => openHandler(todo)}
+      cursor="pointer"
     >
       <Heading size="md" mt="3">
         {todo.title}
@@ -42,6 +52,21 @@ const SingleTodo = ({ todo }) => {
       <Text noOfLines={[1, 2, 3]} color="gray.800">
         {todo.description}
       </Text>
+      <Box display="flex" justifyContent="flex-end">
+        <Button
+          mt="4"
+          size="sm"
+          colorScheme="red"
+          onClick={(event) => {
+            event.stopPropagation();
+            deleteHandler(todo.id);
+          }}
+          isDisabled={isDeleteLoading}
+        >
+          {" "}
+          Delete
+        </Button>
+      </Box>
     </Box>
   );
 };
