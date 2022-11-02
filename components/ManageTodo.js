@@ -32,11 +32,11 @@ const ManageTodo = ({ isOpen, onClose, initialRef }) => {
     event.preventDefault();
     setErrorMessage("");
     if (description.length <= 10) {
-      setErrorMessage("Description must have more than 10 characters");
+      setErrorMessage("A descrição deve ter mais de 10 caracteres");
       return;
     }
     setIsLoading(true);
-    const user = supabaseClient.auth.getUser();
+    const user = supabaseClient.auth.user()
     const { error } = await supabaseClient
       .from("todos")
       .insert([{ title, description, isComplete, user_id: user.id }]);
@@ -65,7 +65,7 @@ const ManageTodo = ({ isOpen, onClose, initialRef }) => {
       <ModalOverlay />
       <ModalContent>
         <form onSubmit={submitHandler}>
-          <ModalHeader>Add Todo</ModalHeader>
+          <ModalHeader>Adicionar tarefa</ModalHeader>
           <ModalCloseButton />
           <ModalBody pb={6}>
             {errorMessage && (
@@ -75,29 +75,29 @@ const ManageTodo = ({ isOpen, onClose, initialRef }) => {
               </Alert>
             )}
             <FormControl isRequired={true}>
-              <FormLabel>Title</FormLabel>
+              <FormLabel>Título</FormLabel>
               <Input
                 ref={initialRef}
-                placeholder="Add your title here"
+                placeholder="Adicione seu título aqui"
                 onChange={(event) => setTitle(event.target.value)}
                 value={title}
               />
             </FormControl>
 
             <FormControl mt={4} isRequired={true}>
-              <FormLabel>Description</FormLabel>
+              <FormLabel>Descrição</FormLabel>
               <Textarea
-                placeholder="Add your description here"
+                placeholder="Adicione sua descrição aqui"
                 onChange={(event) => setDescription(event.target.value)}
                 value={description}
               />
               <FormHelperText>
-                Description must have more than 10 characters.
+                A descrição deve ter mais de 10 caracteres
               </FormHelperText>
             </FormControl>
 
             <FormControl mt={4}>
-              <FormLabel>Is Completed?</FormLabel>
+              <FormLabel>Tarefa completa?</FormLabel>
               <Switch
                 value={isComplete}
                 id="is-completed"
@@ -114,10 +114,10 @@ const ManageTodo = ({ isOpen, onClose, initialRef }) => {
                 type="reset"
                 isDisabled={isLoading}
               >
-                Cancel
+                Cancelar
               </Button>
               <Button colorScheme="blue" type="submit" isLoading={isLoading}>
-                Save
+                Salvar
               </Button>
             </ButtonGroup>
           </ModalFooter>

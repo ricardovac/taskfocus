@@ -89,7 +89,13 @@ const Navbar = ({ onOpen }) => {
           direction={"row"}
           spacing={6}
         >
-          <Button as={"a"} fontSize={"sm"} fontWeight={400} onClick={onOpen}>
+          <Button
+            as={"a"}
+            fontSize={"sm"}
+            cursor={"pointer"}
+            fontWeight={400}
+            onClick={onOpen}
+          >
             Adicionar Tarefas
           </Button>
           <Button
