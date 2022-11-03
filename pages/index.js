@@ -12,6 +12,7 @@ const Home = () => {
   const initialRef = useRef();
   const [todos, setTodos] = useState([]);
   const [todo, setTodo] = useState(null);
+  const [isDeleteLoading, setIsDeleteLoading] = useState(false);
 
   const router = useRouter();
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -42,22 +43,24 @@ const Home = () => {
     const todoListener = supabaseClient
       .from("todos")
       .on("*", (payload) => {
-        const newTodo = payload.new;
-        setTodos((oldTodos) => {
-          const exists = oldTodos.find((todo) => todo.id === newTodo.id);
-          let newTodos;
-          if (exists) {
-            const oldTodoIndex = oldTodos.findIndex(
-              (obj) => obj.id === newTodo.id
-            );
-            oldTodos[oldTodoIndex] = newTodo;
-            newTodos = oldTodos;
-          } else {
-            newTodos = [...oldTodos, newTodo];
-          }
-          newTodos.sort((a, b) => b.id - a.id);
-          return newTodos;
-        });
+        if (payload.eventType !== "DELETE") {
+          const newTodo = payload.new;
+          setTodos((oldTodos) => {
+            const exists = oldTodos.find((todo) => todo.id === newTodo.id);
+            let newTodos;
+            if (exists) {
+              const oldTodoIndex = oldTodos.findIndex(
+                (obj) => obj.id === newTodo.id
+              );
+              oldTodos[oldTodoIndex] = newTodo;
+              newTodos = oldTodos;
+            } else {
+              newTodos = [...oldTodos, newTodo];
+            }
+            newTodos.sort((a, b) => b.id - a.id);
+            return newTodos;
+          });
+        }
       })
       .subscribe();
 
@@ -69,6 +72,18 @@ const Home = () => {
   const openHandler = (clickedTodo) => {
     setTodo(clickedTodo);
     onOpen();
+  };
+
+  const deleteHandler = async (todoId) => {
+    setIsDeleteLoading(true);
+    const { error } = await supabaseClient
+      .from("todos")
+      .delete()
+      .eq("id", todoId);
+    if (!error) {
+      setTodos(todos.filter((todo) => todo.id !== todoId));
+    }
+    setIsDeleteLoading(false);
   };
 
   return (
@@ -105,7 +120,13 @@ const Home = () => {
           m="10"
         >
           {todos.map((todo) => (
-            <SingleTodo todo={todo} key={todo.id} openHandler={openHandler} />
+            <SingleTodo
+              todo={todo}
+              key={todo.id}
+              openHandler={openHandler}
+              deleteHandler={deleteHandler}
+              isDeleteLoading={isDeleteLoading}
+            />
           ))}
         </SimpleGrid>
       </main>

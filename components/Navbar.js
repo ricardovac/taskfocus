@@ -12,9 +12,6 @@ import {
   Icon,
   IconButton,
   Link,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
   Stack,
   Text,
   useBreakpointValue,
@@ -40,6 +37,10 @@ const Navbar = ({ onOpen }) => {
     } finally {
       setIsLogoutLoading(false);
     }
+  };
+
+  const handleHome = () => {
+    router.push("/");
   };
 
   return (
@@ -74,6 +75,8 @@ const Navbar = ({ onOpen }) => {
             textAlign={useBreakpointValue({ base: "center", md: "left" })}
             fontFamily={"heading"}
             color={useColorModeValue("gray.800", "white")}
+            onClick={() => handleHome()}
+            cursor="pointer"
           >
             TaskFocus
           </Text>
@@ -123,23 +126,28 @@ const Navbar = ({ onOpen }) => {
   );
 };
 
-const DesktopNav = () => {
+const DesktopNav = ({ onOpen }) => {
   const linkColor = useColorModeValue("gray.600", "gray.200");
   const linkHoverColor = useColorModeValue("gray.800", "white");
   const popoverContentBgColor = useColorModeValue("white", "gray.800");
+  const router = useRouter();
 
   return (
     <Stack direction={"row"} spacing={4}>
       <Box>
-        <Button
-          as={"a"}
-          fontSize={"sm"}
-          fontWeight={400}
-          variant={"link"}
-          href="/profile"
-        >
-          Perfil
-        </Button>
+        {router.pathname === "/" && (
+          <Button
+            as={"a"}
+            fontSize={"sm"}
+            fontWeight={400}
+            variant={"link"}
+            cursor="pointer"
+            onClick={onOpen}
+            href="/profile"
+          >
+            Perfil
+          </Button>
+        )}
       </Box>
     </Stack>
   );

@@ -59,6 +59,7 @@ const ManageTodo = ({ isOpen, onClose, initialRef, todo, setTodo }) => {
       const { error } = await supabaseClient
         .from("todos")
         .insert([{ title, description, isComplete, user_id: user.id }]);
+      Router.reload();
       supabaseError = error;
     }
 
