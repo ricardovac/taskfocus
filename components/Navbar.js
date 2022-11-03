@@ -3,6 +3,7 @@ import {
   ChevronRightIcon,
   CloseIcon,
   HamburgerIcon,
+  SunIcon,
 } from "@chakra-ui/icons";
 import {
   Box,
@@ -15,12 +16,14 @@ import {
   Stack,
   Text,
   useBreakpointValue,
+  useColorMode,
   useColorModeValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { supabaseClient } from "../lib/client";
+import { ColorModeSwitcher } from "../lib/colorModeSwitcher";
 
 const Navbar = ({ onOpen }) => {
   const router = useRouter();
@@ -92,6 +95,7 @@ const Navbar = ({ onOpen }) => {
           direction={"row"}
           spacing={6}
         >
+          <ColorModeSwitcher />
           <Button
             as={"a"}
             fontSize={"sm"}

@@ -6,7 +6,9 @@ import {
   Tag,
   Center,
   Button,
+  useColorModeValue,
 } from "@chakra-ui/react";
+import { ColorModeSwitcher } from "../lib/colorModeSwitcher";
 
 const SingleTodo = ({ todo, openHandler, deleteHandler, isDeleteLoading }) => {
   const getDateInMonthDayYear = (date) => {
@@ -49,7 +51,10 @@ const SingleTodo = ({ todo, openHandler, deleteHandler, isDeleteLoading }) => {
         {getDateInMonthDayYear(todo.insertedat)}
       </Text>
       <Divider my="4" />
-      <Text noOfLines={[1, 2, 3]} color="gray.800">
+      <Text
+        noOfLines={[1, 2, 3]}
+        color={useColorModeValue("dark") ? "black" : "white"}
+      >
         {todo.description}
       </Text>
       <Box display="flex" justifyContent="flex-end">
