@@ -107,83 +107,86 @@ const Profile = () => {
   };
 
   return (
-    <Box>
-      <Navbar />
-      <Box mt="8" maxW="xl" mx="auto">
-        <Flex align="center" justify="center" direction="column">
-          <Avatar
-            size="2xl"
-            src={avatarurl || ""}
-            name={username || user?.email}
-          />
-          <FormLabel
-            htmlFor="file-input"
-            my="5"
-            borderRadius="2xl"
+    <div>
+      <Box>
+        <Navbar />
+        <Box mt="8" maxW="xl" mx="auto">
+          <Flex align="center" justify="center" direction="column">
+            <Avatar
+              size="2xl"
+              src={avatarurl || ""}
+            />
+            <FormLabel
+              htmlFor="file-input"
+              my="5"
+              borderRadius="2xl"
+              borderWidth="1px"
+              textAlign="center"
+              p="2"
+              bg="blue.400"
+              color="white"
+              cursor="pointer"
+            >
+              {isImageUploadLoading
+                ? "Uploading....."
+                : "Upload Profile Picture"}
+            </FormLabel>
+            <Input
+              type="file"
+              hidden
+              id="file-input"
+              onChange={uploadHandler}
+              multiple={false}
+              disabled={isImageUploadLoading}
+            />
+          </Flex>
+          <Stack
             borderWidth="1px"
-            textAlign="center"
-            p="2"
-            bg="blue.400"
-            color="white"
-            cursor="pointer"
+            borderRadius="lg"
+            overflow="hidden"
+            p={5}
+            mt="-2"
+            spacing="4"
+            as="form"
+            onSubmit={updateHandler}
           >
-            {isImageUploadLoading ? "Uploading....." : "Upload Profile Picture"}
-          </FormLabel>
-          <Input
-            type="file"
-            hidden
-            id="file-input"
-            onChange={uploadHandler}
-            multiple={false}
-            disabled={isImageUploadLoading}
-          />
-        </Flex>
-        <Stack
-          borderWidth="1px"
-          borderRadius="lg"
-          overflow="hidden"
-          p={5}
-          mt="-2"
-          spacing="4"
-          as="form"
-          onSubmit={updateHandler}
-        >
-          <FormControl id="email" isRequired>
-            <FormLabel>Email</FormLabel>
-            <Input type="email" isDisabled={true} value={email} />
-          </FormControl>
-          <FormControl id="username" isRequired>
-            <FormLabel>Username</FormLabel>
-            <Input
-              placeholder="Add your username here"
-              type="text"
-              value={username}
-              onChange={(event) => setUsername(event.target.value)}
-            />
-          </FormControl>
-          <FormControl id="website" isRequired>
-            <FormLabel>Website URL</FormLabel>
-            <Input
-              placeholder="Add your website here"
-              type="url"
-              value={website}
-              onChange={(event) => setWebsite(event.target.value)}
-            />
-          </FormControl>
-          <FormControl id="bio" isRequired>
-            <FormLabel>Bio</FormLabel>
-            <Textarea
-              placeholder="Add your bio here"
-              value={bio}
-              onChange={(event) => setBio(event.target.value)}
-            />
-          </FormControl>
-          <Button colorScheme="blue" type="submit" isLoading={isLoading}>
-            Update
-          </Button>
-        </Stack>
+            <FormControl id="email" isRequired>
+              <FormLabel>Email</FormLabel>
+              <Input type="email" isDisabled={true} value={email} />
+            </FormControl>
+            <FormControl id="username" isRequired>
+              <FormLabel>Username</FormLabel>
+              <Input
+                placeholder="Add your username here"
+                type="text"
+                value={username}
+                onChange={(event) => setUsername(event.target.value)}
+              />
+            </FormControl>
+            <FormControl id="website" isRequired>
+              <FormLabel>Website URL</FormLabel>
+              <Input
+                placeholder="Add your website here"
+                type="url"
+                value={website}
+                onChange={(event) => setWebsite(event.target.value)}
+              />
+            </FormControl>
+            <FormControl id="bio" isRequired>
+              <FormLabel>Bio</FormLabel>
+              <Textarea
+                placeholder="Add your bio here"
+                value={bio}
+                onChange={(event) => setBio(event.target.value)}
+              />
+            </FormControl>
+            <Button colorScheme="blue" type="submit" isLoading={isLoading}>
+              Update
+            </Button>
+          </Stack>
+        </Box>
       </Box>
-    </Box>
+    </div>
   );
 };
 
